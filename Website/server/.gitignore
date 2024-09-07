@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 data.db
+
+node_modules
+.env
