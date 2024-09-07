@@ -1,3 +1,5 @@
+#DEPRECATED FILE - NOT USED IN THE FINAL VERSION OF THE PROJECT
+
 import sqlite3
 import streamlit as st
 

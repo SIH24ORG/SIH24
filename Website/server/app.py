@@ -1,3 +1,5 @@
+#DEPRECATED FILE - NOT USED IN THE FINAL VERSION OF THE PROJECT
+
 from flask import Flask
 from routes.api import api
 
