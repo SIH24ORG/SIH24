@@ -1,10 +1,17 @@
 import express from 'express';
+import cors from 'cors';
+
+import paymentRouter from './routes/paymentRouter.mjs';
+import loginRouter from './routes/loginRouter.mjs';
+
 const app = express();
 
-app.get('/', (req, res) => {
-    res.send('Server is running');
-});
+app.use(express.json());
+app.use(cors());
+
+app.use('/loginApi',loginRouter);
+app.use('/payApi',paymentRouter);
 
 app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+    console.log('Server running on port 3000');
 });
