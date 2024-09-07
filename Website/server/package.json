@@ -1,21 +1,19 @@
 {
   "name": "ddos-website",
   "version": "1.0.0",
-  "description": "DDos website with Flask and Streamlit",
-  "main": "index.mjs",
-  "dependencies": {
-    "express": "^4.17.1"
-  },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cli-table": "^0.3.11",
     "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
-  "scripts": {
-    "start": "node index.mjs"
+    "express": "^4.19.2",
+    "pcap-parser": "^0.2.1"
+  },
+  "devDependencies": {
+    "cap": "^0.2.1"
   }
 }
