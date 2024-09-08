@@ -6,6 +6,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.21.0",
+    "axios": "^1.7.7",
     "cli-table": "^0.3.11",
     "cors": "^2.8.5",
     "csv-writer": "^1.6.0",

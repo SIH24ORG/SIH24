@@ -2,6 +2,7 @@ import cap from 'cap';
 import { createObjectCsvWriter } from 'csv-writer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import axios from 'axios'; // Import axios
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,13 +17,20 @@ const csvWriter = createObjectCsvWriter({
         { id: 'destPort', title: 'Destination Port' },
         { id: 'protocol', title: 'Protocol' },
         { id: 'length', title: 'Length' },
-        { id: 'seqNum', title: 'Sequence Number' },
-        { id: 'ackNum', title: 'Acknowledgment Number' },
-        { id: 'flags', title: 'Flags' },
-        { id: 'windowSize', title: 'Window Size' },
-        { id: 'checksum', title: 'Checksum' },
+        { id: 'httpMethod', title: 'HTTP Method' },
+        { id: 'httpPath', title: 'HTTP Path' },
         { id: 'payload', title: 'Payload (Hex)' },
         { id: 'truncated', title: 'Truncated' },
+        { id: 'dstPort', title: 'Dst Port' },
+        { id: 'flowPktsPerSec', title: 'Flow Pkts/s' },
+        { id: 'fwdHeaderLen', title: 'Fwd Header Len' },
+        { id: 'bwdHeaderLen', title: 'Bwd Header Len' },
+        { id: 'fwdPktsPerSec', title: 'Fwd Pkts/s' },
+        { id: 'bwdPktsPerSec', title: 'Bwd Pkts/s' },
+        { id: 'initFwdWinByts', title: 'Init Fwd Win Byts' },
+        { id: 'initBwdWinByts', title: 'Init Bwd Win Byts' },
+        { id: 'fwdActDataPkts', title: 'Fwd Act Data Pkts' },
+        { id: 'fwdSegSizeMin', title: 'Fwd Seg Size Min' },
     ],
     append: true
 });
@@ -66,59 +74,83 @@ const extractPacketDetails = (buffer) => {
     };
 };
 
-export const analyzeTraffic = (req, res, next) => {
+const extractAdditionalDetails = (buffer) => {
+    // Dummy values for the new features; in practice, you would extract these from the packet data
+    const dstPort = buffer.readUInt16BE(36);
+    const flowPktsPerSec = 0; // This would typically be computed over time
+    const fwdHeaderLen = buffer.readUInt8(14); // Example offset, adjust as needed
+    const bwdHeaderLen = buffer.readUInt8(16); // Example offset, adjust as needed
+    const fwdPktsPerSec = 0; // This would typically be computed over time
+    const bwdPktsPerSec = 0; // This would typically be computed over time
+    const initFwdWinByts = buffer.readUInt16BE(48);
+    const initBwdWinByts = buffer.readUInt16BE(50); // Example offset, adjust as needed
+    const fwdActDataPkts = 0; // This would typically be computed over time
+    const fwdSegSizeMin = buffer.readUInt16BE(54); // Example offset, adjust as needed
+
+    return {
+        dstPort,
+        flowPktsPerSec,
+        fwdHeaderLen,
+        bwdHeaderLen,
+        fwdPktsPerSec,
+        bwdPktsPerSec,
+        initFwdWinByts,
+        initBwdWinByts,
+        fwdActDataPkts,
+        fwdSegSizeMin
+    };
+};
+
+const sendPacketToServer = async (packetData) => {
     try {
-        const packets = [];
-        const c = new cap.Cap();
-        const device = findDevice();
-
-        const filter = ''; 
-        const bufSize = 10 * 1024 * 1024; 
-        const buffer = Buffer.alloc(65535); 
-
-        const linkType = c.open(device, filter, bufSize, buffer);
-        c.setMinBytes && c.setMinBytes(0);
-
-        console.log(`Analyzing traffic for request: ${req.method} ${req.url}`);
-
-        c.once('packet', async (nbytes, truncated) => {
-            console.log(`Packet captured during request (${nbytes} bytes)`);
-
-            try {
-                const packetDetails = extractPacketDetails(buffer);
-
-                const record = {
-                    timestamp: new Date().toISOString(),
-                    srcIP: packetDetails.srcIP,
-                    srcPort: packetDetails.srcPort,
-                    destIP: packetDetails.destIP,
-                    destPort: packetDetails.destPort,
-                    protocol: packetDetails.protocol,
-                    length: nbytes,
-                    seqNum: packetDetails.seqNum,
-                    ackNum: packetDetails.ackNum,
-                    flags: packetDetails.flags,
-                    windowSize: packetDetails.windowSize,
-                    checksum: packetDetails.checksum,
-                    payload: buffer.toString('hex', 0, nbytes).substring(0, 60) + '...',
-                    truncated: truncated ? 'Yes' : 'No',
-                };
-
-                packets.push(record);
-                console.log('Packet Details:', record);
-
-                await csvWriter.writeRecords([record]);
-
-                console.log(`Packet data logged for request: ${req.method} ${req.url}`);
-            } catch (err) {
-                console.error('Error parsing packet:', err);
-            }
-
-            c.close();
-        });
-
+        const response = await axios.post('http://127.0.0.1:5000/predict', packetData);
+        console.log('Server response:', response.data);
     } catch (error) {
-        console.error('Error initializing packet capture:', error);
+        console.error('Error sending packet to server:', error);
     }
+};
 
+export const startPacketCapture = () => {
+    const c = new cap.Cap();
+    const device = findDevice();
+
+    // Filter for HTTP traffic (port 80)
+    const filter = ''; 
+    const bufSize = 10 * 1024 * 1024;
+    const buffer = Buffer.alloc(65535);
+
+    c.open(device, filter, bufSize, buffer);
+    c.setMinBytes && c.setMinBytes(0);
+
+    c.on('packet', async (nbytes, truncated) => {
+        //console.log(`Packet captured (${nbytes} bytes)`);
+
+        try {
+            const packetDetails = extractPacketDetails(buffer);
+            const additionalDetails = extractAdditionalDetails(buffer);
+
+            const record = {
+                destPort: packetDetails.destPort,
+                flowPktsPerSec: additionalDetails.flowPktsPerSec,
+                fwdHeaderLen: additionalDetails.fwdHeaderLen,
+                bwdHeaderLen: additionalDetails.bwdHeaderLen,
+                fwdPktsPerSec: additionalDetails.fwdPktsPerSec,
+                bwdPktsPerSec: additionalDetails.bwdPktsPerSec,
+                initFwdWinByts: additionalDetails.initFwdWinByts,
+                initBwdWinByts: additionalDetails.initBwdWinByts,
+                fwdActDataPkts: additionalDetails.fwdActDataPkts,
+                fwdSegSizeMin: additionalDetails.fwdSegSizeMin
+            };
+
+            // Send packet details to Flask server
+            await sendPacketToServer(record);
+
+            await csvWriter.writeRecords([record]);
+            //console.log('Packet data logged and sent to server:', record);
+        } catch (err) {
+            console.error('Error processing packet:', err);
+        }
+    });
+
+    console.log('Packet capture started');
 };
