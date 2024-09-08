@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+    text-transform: capitalize;
+    transition: all 0.3s ease;
+}
+
+body {
+    background: linear-gradient(135deg, #2b2b2b, #1f1f1f);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 25px;
+    color: #f0f0f0; 
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 30px;
+    background: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow for depth */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.container form {
+    width: 100%;
+    padding: 20px;
+}
+
+.container form .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.container form .row .col {
+    flex: 1 1 250px;
+}
+
+.col .title {
+    font-size: 22px;
+    color: #ed3717; /* Keep the title color bright for contrast */
+    padding-bottom: 8px;
+    font-weight: 500;
+}
+
+.col .inputBox {
+    margin: 20px 0;
+}
+
+.col .inputBox label {
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+    color: #bbb; 
+}
+
+.col .inputBox input,
+.col .inputBox select {
+    width: 100%;
+    border: 1px solid #555; 
+    padding: 12px 15px;
+    font-size: 15px;
+    border-radius: 5px;
+    background-color: #444; 
+    color: #fff; 
+}
+
+.col .inputBox input:focus,
+.col .inputBox select:focus {
+    border: 1px solid #3d17fb;
+    background-color: #555;
+}
+
+.col .flex {
+    display: flex;
+    gap: 15px;
+}
+
+.col .flex .inputBox {
+    flex: 1 1;
+    margin-top: 5px;
+}
+
+.col .inputBox img {
+    height: 34px;
+    margin-top: 5px;
+    filter: drop-shadow(0 0 2px #000);
+}
+
+.container form .submit_btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    background: #018f22;
+    color: #fff;
+    margin-top: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.container form .submit_btn:hover {
+    background: #3d17fb;
+}
+
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+    display: none;
+}
