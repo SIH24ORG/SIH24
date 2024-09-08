@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:3000';
 
 async function loginVerify(event) {
-    event.preventDefault(); // Prevent form from submitting and reloading
+    event.preventDefault(); 
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
