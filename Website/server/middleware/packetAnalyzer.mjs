@@ -66,9 +66,9 @@ const extractPacketDetails = (buffer) => {
     };
 };
 
-export const analyzeTraffic = () => {
+export const analyzeTraffic = (req, res, next) => {
     try {
-        const packets = []; 
+        const packets = [];
         const c = new cap.Cap();
         const device = findDevice();
 
@@ -79,11 +79,10 @@ export const analyzeTraffic = () => {
         const linkType = c.open(device, filter, bufSize, buffer);
         c.setMinBytes && c.setMinBytes(0);
 
-        console.log(`Listening on device: ${device}`);
-        console.log(`Link type: ${linkType}`);
+        console.log(`Analyzing traffic for request: ${req.method} ${req.url}`);
 
-        c.on('packet', async (nbytes, truncated) => {
-            console.log(`Packet received (${nbytes} bytes)`);
+        c.once('packet', async (nbytes, truncated) => {
+            console.log(`Packet captured during request (${nbytes} bytes)`);
 
             try {
                 const packetDetails = extractPacketDetails(buffer);
@@ -106,17 +105,20 @@ export const analyzeTraffic = () => {
                 };
 
                 packets.push(record);
-
                 console.log('Packet Details:', record);
 
                 await csvWriter.writeRecords([record]);
 
+                console.log(`Packet data logged for request: ${req.method} ${req.url}`);
             } catch (err) {
                 console.error('Error parsing packet:', err);
             }
+
+            c.close();
         });
 
     } catch (error) {
         console.error('Error initializing packet capture:', error);
     }
+
 };

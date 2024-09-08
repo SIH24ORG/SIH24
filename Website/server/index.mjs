@@ -10,12 +10,11 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(analyzeTraffic)
 
 app.use('/loginApi',loginRouter);
 app.use('/payApi',paymentRouter);
 
 app.listen(3000, () => {
     console.log('Server running on port 3000');
-
-    analyzeTraffic();
 });

@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/styles.css">
-    <title>DDos Website</title>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="./styles/styles.css">
 </head>
 <body>
-    <h1>Welcome to a Simple Website to test our detector</h1>
-    <p>Interact with the server using the form below:</p>
-    <form id="data-form">
-        <input type="text" id="data-input" placeholder="Enter data">
-        <button type="submit">Submit</button>
-    </form>
-    <p id="response"></p>
-
-    <script src="assets/script.js"></script>
+    <div class="main">
+        <h1>SIH</h1>
+        <h3>Login Now</h3>
+        <form onsubmit="loginVerify(event)" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            
+            <div class="wrap">
+                <button type="submit">
+                    Submit
+                </button>
+            </div>
+        </form>
+        <div id="loginStatus" class="login-status"></div>
+        <p>Not registered? <a href="#" style="text-decoration: none;">Create an account</a></p>
+    </div>
+    <footer>
+        <p>© 2024 SIH. All Rights Reserved | Design by <a href="https://github.com/Raghavi-1" target="_blank">Raghavi-1</a></p>   
+    </footer>
 </body>
+<script src="./scripts/index.js"></script>
 </html>
